@@ -1,0 +1,25 @@
+#Déclaration du projet
+project(my_project)
+
+#link_directories(/usr/local/lib)
+
+set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS} ".")
+
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+
+list(APPEND HEADER_REP ${ROOT_DIR}/)
+
+
+set(CPP_FILES ${ROOT_DIR}/main_rasp.cpp ${ROOT_DIR}/mylib.cpp)
+
+
+add_executable(my_project ${CPP_FILES}  ${HEADER_FILES})
+
+set_target_properties(my_project PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(my_project PUBLIC ${ROOT_DIR}/inc/)
+target_link_libraries(my_project Qt5::Widgets)
+target_link_libraries(my_project Qt5::Core)
+target_link_libraries(my_project opencv_core opencv_highgui opencv_imgproc opencv_imgcodecs opencv_video opencv_videoio)
