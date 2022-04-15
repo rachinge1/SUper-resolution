@@ -93,11 +93,8 @@ Mat PPV_GPU( Mat in,int res)
 
 __global__ void kernel_bili_GPU(unsigned char *d_image_in, unsigned char *d_image_out,int size_j,int res)
 {
-	int i,j,vi,vj,P,X=0,N=0, coef;
-	int a ,b ;
-	int tab_ref[5][2];
-	int diff_rows,diff_cols;
-	unsigned char *d_image_out_bis;
+	int i,j,vi,vj;
+	int a;
 	
 	int height = blockIdx.x*BLOCK_SIZE; // num de block dans la grille de block
 	int width = blockIdx.y*BLOCK_SIZE;
@@ -198,11 +195,8 @@ Mat bili_GPU( Mat in,int res)
 
 __global__ void kernel_bicubic_GPU(unsigned char *d_image_in, unsigned char *d_image_out,int size_j,int res)
 {
-	int i,j,vi,vj,P,X=0,N=0, coef;
-	int a ,b ,M,Q,tab_ref1[4];
-	int tab_ref[5][2], rseu[4][3];
-	int diff_rows,diff_cols;
-	unsigned char *d_image_out_bis;
+	int i,j,vi,vj,coef;
+	int a ,b ,M,Q,tab_ref1[4],rseu[4][3];
 	
 	int height = blockIdx.x*BLOCK_SIZE; // num de block dans la grille de block
 	int width = blockIdx.y*BLOCK_SIZE;
@@ -210,7 +204,7 @@ __global__ void kernel_bicubic_GPU(unsigned char *d_image_in, unsigned char *d_i
 	i = height + threadIdx.x;// recuperer l'identifiant d'un thread dans les blocs
 	j = width + threadIdx.y;
 
-		//echantillonage
+		//sur echantillonage
 		d_image_out[1+(j*res)*3+(i*res*res)*3*size_j] = d_image_in[1+j*3+i*3*size_j];
 		d_image_out[0+(j*res)*3+(i*res*res)*3*size_j] = d_image_in[0+j*3+i*3*size_j];
 		d_image_out[2+(j*res)*3+(i*res*res)*3*size_j] = d_image_in[2+j*3+i*3*size_j];
@@ -219,11 +213,11 @@ __global__ void kernel_bicubic_GPU(unsigned char *d_image_in, unsigned char *d_i
 	{
 		for(vj=0;vj<res;vj++) // Parcourir les nouveaux pixels sur la même colonne
 		{
-			if ((vi<=0) && (vj<=0))
+			if ((vi<=0) && (vj<=0)) // Si pixel connu
 			{
 				
 			}
-			else if(vi==0) // Si pixel inconnu colonne
+			else if(vi==0) // Si pixel inconnu ligne
 			{
 				for(int M=0;M<4;M++)
 				{
@@ -246,7 +240,7 @@ __global__ void kernel_bicubic_GPU(unsigned char *d_image_in, unsigned char *d_i
 					} 
 				}
 			}		
-			else if(vj==0) // Si pixel connu
+			else if(vj==0) // Si pixel inconnu colonne
 			{
 				for(int M=0;M<4;M++)
 				{
