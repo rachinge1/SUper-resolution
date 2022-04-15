@@ -76,12 +76,10 @@ Mat bicubique(Mat image_BR,int res)
    
    int width= image_BR.cols*res;
    int height =  image_BR.rows*res;
-   int N=0,D=0,X=0,A=0;
+   int N=0,P=0,A=0,G=0;
    signed int a,b;
    int Q, ligne=0, colonne=0;
-   int P1[4][3];
-   float q;
-   //int tab_ref0[4][2],tab_ref1[4][2],tab_ref2[4][2],tab_ref3[8][2];
+   float q, p;
    int tab_ref[4][4][2];
    int tab_ref1[4];
    Mat image_HR;
@@ -108,7 +106,7 @@ Mat bicubique(Mat image_BR,int res)
     {
        for (int J=4;J<width-4;J++)
        {
-            int P=image_HR_bis.at<Vec3b>(I,J)[0];N=0;
+            P=image_HR_bis.at<Vec3b>(I,J)[0];N=0;
             if(P<=0) // Utiliser les pixels qui n'ont pas de valeur
             {
                 for(a=I-(2*res);a<I+(2*res+1);a++)
@@ -119,7 +117,7 @@ Mat bicubique(Mat image_BR,int res)
                         {
                             if ((b>-1) && (b<width))  //Si on ne sort pas de l'image  
                             { 
-                                int G=image_HR_bis.at<Vec3b>(a,b)[0];
+                                G=image_HR_bis.at<Vec3b>(a,b)[0];
                                 if((G>=1) && (N<16)) // ranger les pixels connus dans un tableau
                                 {
                                     if(N<4)
@@ -168,7 +166,7 @@ Mat bicubique(Mat image_BR,int res)
 
                     for (int R=0;R<4;R++)
                     {
-                        float p=1.0;
+                        p=1.0;
                         for(int T=0;T<4;T++)
                         {
                             if(R!=T)
@@ -234,7 +232,7 @@ Mat bicubique(Mat image_BR,int res)
                         } 
                     } 
                     tab_ref1[3]=tab_ref[3][0][0];
-                    //----------------------------------------------------
+//---------------------------- Cubique------------------------
                     for (int R=0;R<4;R++) 
                     {
                         float p=1.0;
@@ -313,8 +311,8 @@ Mat bicubique(Mat image_BR,int res)
     }
   //image_HR=noirBlanc(image_HR); // mettre l'image finale en noir et blanc pour mieux voir la différence de précision
     auto end= std::chrono::high_resolution_clock::now();
-   auto resultat=std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
-   std::cout<< "Temps Bicubique ="<<resultat.count()<<"millisecondes "<<endl;
+    auto resultat=std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
+    std::cout<< "Temps Bicubique ="<<resultat.count()<<"millisecondes "<<endl;
     return image_HR;
 }     
 
@@ -425,6 +423,7 @@ Mat bilineaire(Mat image_BR,int res)
    std::cout<< "Temps Bilinéaire ="<<resultat.count()<<"millisecondes "<<endl;
    return image_HR;
 }
+//---------------------Sur échantillonnage---------------------------------------
 
 Mat echantillonnage(Mat image_BR,int res)
 {
